@@ -1,10 +1,11 @@
 import React,{useRef,useState} from 'react';
 import {View, StyleSheet,PanResponder,Animated,Dimensions,Image, Text, TouchableOpacity} from 'react-native';
 
-const MainScreen = ({navigation}) => {
+const MainScreen = ({navigation,route}) => {
   const [x, setX] = useState(0)
   const [y, setY] = useState(0)
   const [sprit, setSprit] = useState(require('../../assets/catScratch.png'))
+  const actions = route.params?.actions
   
     const width = Dimensions.get('window').width
     const height = Dimensions.get('window').height
@@ -65,6 +66,27 @@ const MainScreen = ({navigation}) => {
         },
       }),
     ).current;
+    const runactions=()=>{
+      console.log(actions)
+      if(actions!==undefined)
+      {
+        actions.map((item)=>{
+          if(item.operation === "move")
+          {
+            
+            if(item.action === "X")
+            {
+              pan.x.setValue(x+Number(item.by))
+              setX(x+Number(item.by))
+            }
+            else{
+              pan.y.setValue(y+Number(item.by))
+              setY(y+Number(item.by))
+            }
+          }
+        })
+      }
+    }
 
     const SpritBox=()=>{
       const heightBox=0.18*height
@@ -97,12 +119,19 @@ const MainScreen = ({navigation}) => {
         {...panResponder.panHandlers}>
            </Animated.Image>
         </View>
-        <View style={{height:'16%',width:'100%',backgroundColor:"white",alignItems:"center",justifyContent:"flex-start",flexDirection:"row",elevation:10}}>
-          <Text style={{color:"black",fontSize:18,fontWeight:'bold',marginLeft:20}}>Sprit : {sprit}</Text>
-          <Text style={{color:"black",fontSize:18,fontWeight:'bold',marginLeft:80}}>X : {Math.floor(x)}</Text>
-          <Text style={{color:"black",fontSize:18,fontWeight:'bold',marginLeft:80}}>Y : {Math.floor(y)}</Text>
+        <View style={{height:'8%',alignItems:"center",justifyContent:"center"}}>
+          <TouchableOpacity onPress={()=>{
+            runactions()
+          }}>
+            <Text style={{color:'black'}}>RUN</Text>
+          </TouchableOpacity>
         </View>
-        <View style={{height:'24%',width:'100%',backgroundColor:'#DDDDDD',alignItems:'center',justifyContent:'flex-start',flexDirection:"row"}}>
+        <View style={{height:'10%',width:'100%',backgroundColor:"white",alignItems:"center",justifyContent:"flex-start",flexDirection:"row",elevation:10}}>
+          <Text style={{color:"black",fontSize:16,fontWeight:'bold',marginLeft:20}}>Sprit : {sprit}</Text>
+          <Text style={{color:"black",fontSize:16,fontWeight:'bold',marginLeft:80}}>X : {Math.floor(x)}</Text>
+          <Text style={{color:"black",fontSize:16,fontWeight:'bold',marginLeft:80}}>Y : {Math.floor(y)}</Text>
+        </View>
+        <View style={{height:'22%',width:'100%',backgroundColor:'#DDDDDD',alignItems:'center',justifyContent:'flex-start',flexDirection:"row"}}>
           <SpritBox></SpritBox>
         </View>
      

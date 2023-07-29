@@ -1,9 +1,9 @@
 import React, {useRef,useState} from 'react';
-import {Animated, View, StyleSheet, PanResponder, Text,Dimensions} from 'react-native';
+import {Animated, View, StyleSheet, PanResponder, Text,Dimensions,TouchableOpacity} from 'react-native';
 
-const ActionScreen = () => {
+
+const ActionScreen = ({navigation}) => {
     let operations=[]
-    
     const height = Dimensions.get('window').height
     const width =Dimensions.get('window').width
     console.log("width",width,"height",height)
@@ -12,6 +12,24 @@ const ActionScreen = () => {
     //     setIsDraggedToRight(false)
     // }
 
+    const deleteDraggableComponent=(operation,action,by)=>{
+      
+    
+      
+      console.log(operation,action,by)
+     
+    
+      
+      operations = operations.filter((op) => {
+        console.log(typeof op.operation,typeof operation)
+        return (
+          op.operation !== operation ||
+          op.action !== action ||
+          op.by !== by
+        );
+      });
+      console.log(operations)
+         }
     const positionDraggableComponent=(operation,action,by)=>{
         // console.log(operation,action,by)
         operations.push({
@@ -19,7 +37,13 @@ const ActionScreen = () => {
             "action":action,
             "by":by
         })
-        // if(xvalue>(0.5*width) )
+       
+        jsonObject = operations.map(JSON.stringify);
+        uniqueSet = new Set(jsonObject);
+        uniqueArray = Array.from(uniqueSet).map(JSON.parse);
+        operations = uniqueArray
+        console.log(operations);
+         // if(xvalue>(0.5*width) )
         // {
         //     setIsDraggedToRight(true)
             
@@ -28,11 +52,6 @@ const ActionScreen = () => {
         // {
         //     setIsDraggedToRight(false)
         // }
-        jsonObject = operations.map(JSON.stringify);
-        uniqueSet = new Set(jsonObject);
-        uniqueArray = Array.from(uniqueSet).map(JSON.parse);
-    
-        console.log(uniqueArray);
     }
     
 
@@ -72,6 +91,7 @@ const ActionScreen = () => {
           // Check if the box is going out of bounds in the X direction
           if (x < minX) {
             pan.x.setValue(minX);  
+            deleteDraggableComponent(props.operation,props.action,props.by)
           } 
           else if (x > maxX) {
             pan.x.setValue(maxX);
@@ -118,20 +138,29 @@ const ActionScreen = () => {
                   transform: [{translateX: pan.x}, {translateY: pan.y}],
                 }}
                 {...panResponder.panHandlers}>
-                <View style={styles.box} />
+                <View style={styles.box}>
+                  <Text style={{color:"white"}}>{props.operation} {props.action} by {props.by}</Text>
+                </View>
                 
               </Animated.View>
            
           );
     }
     return (
-        <View style={{height:"100%",width:"100%"}}>
+        <View style={{height:"100%",width:"100%",backgroundColor:"#DDDDDD"}}>
             
-            <View style={{height:'100%',width:"50%",backgroundColor:"white"}}>
+            <View style={{height:'90%',width:"50%",backgroundColor:"white"}}>
             <DraggableComponent operation="move" action="X" by={50}  positionDraggableComponent={positionDraggableComponent}></DraggableComponent>
             <DraggableComponent operation="move" action="Y" by={50}  positionDraggableComponent={positionDraggableComponent}></DraggableComponent>
             </View>
-            <View style={{height:'100%',width:"50%",backgroundColor:"#DDDDDD"}}></View>
+            <View style={{height:'10%',width:"100%",alignItems:"center",justifyContent:"center"}}>
+              <TouchableOpacity onPress={()=>{
+                navigation.navigate('MainScreen',{actions:operations})
+              }} style={{height:40,width:100,alignItems:"center",justifyContent:"center",backgroundColor:"grey",borderRadius:20}}>
+                <Text style={{color:"white"}}>Add actions</Text>
+              </TouchableOpacity>
+            </View>
+            
 
             
 
@@ -159,6 +188,9 @@ const styles = StyleSheet.create({
     width: '70%',
     backgroundColor: '#7461e3',
     borderRadius: 5,
+    alignItems:"center",
+    justifyContent:"center",
+    flexDirection:"row"
   },
 });
 

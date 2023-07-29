@@ -13,8 +13,8 @@ const App = () => {
     
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="MainScreen" component={MainScreen} />
-        <Stack.Screen name="ActionScreen" component={ActionScreen} />
+        <Stack.Screen options={{headerShown:false}} name="MainScreen" component={MainScreen} />
+        <Stack.Screen options={{headerShown:false}} name="ActionScreen" component={ActionScreen} />
       </Stack.Navigator>
     </NavigationContainer>
     
