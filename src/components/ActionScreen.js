@@ -314,7 +314,7 @@ const ActionScreen = ({navigation}) => {
         }}>
         <TouchableOpacity
           onPress={() => {
-            if (aliveOperations === []) {
+            if (aliveOperations.length === 0) {
               console.log(true);
               navigation.navigate('MainScreen', {actions: operations});
             } else {
